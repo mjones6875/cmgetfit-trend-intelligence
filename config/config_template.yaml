@@ -28,6 +28,12 @@ apis:
     pinterest_actor: automation-lab/pinterest-trends-scraper
     note: Replaces official Pinterest API, which does not expose trend data
 
+  tiktok:
+    client_key: YOUR_TIKTOK_CLIENT_KEY_HERE
+    client_secret: YOUR_TIKTOK_CLIENT_SECRET_HERE
+    status: pending_approval
+    note: Academic Research API only — cannot be used commercially
+
   airtable:
     api_key: YOUR_AIRTABLE_API_KEY_HERE
     base_id: YOUR_AIRTABLE_BASE_ID_HERE

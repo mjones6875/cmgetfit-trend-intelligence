@@ -12,9 +12,10 @@ here.
 Google Trends (pytrends) requires no key, so it gets an inexpensive live
 request as its actual availability signal.
 
-Reddit is marked optional: researcher access is still pending approval,
-so a missing Reddit key should not fail the overall health check — the
-pipeline is expected to run without it using the other sources.
+Reddit and TikTok are both marked optional: researcher/academic access is
+still pending approval for both, so missing keys for either should not
+fail the overall health check — the pipeline is expected to run without
+them using the other sources.
 
 Author: Marlon J. Jones Jr.
 """
@@ -36,13 +37,21 @@ SOURCES = {
     "apify_pinterest": (["APIFY_API_KEY"], True),
     "airtable": (["AIRTABLE_API_KEY", "AIRTABLE_BASE_ID"], True),
     "reddit": (["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"], False),
+    "tiktok": (["TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET"], False),
 }
 
 
+_PLACEHOLDER_VALUES = {"pending", "pending_approval"}
+
+
 def _check_env_vars(source: str, var_names: list) -> bool:
-    missing = [name for name in var_names if not os.getenv(name)]
+    missing = [
+        name
+        for name in var_names
+        if not os.getenv(name) or os.getenv(name).lower() in _PLACEHOLDER_VALUES
+    ]
     if missing:
-        logger.warning("%s: missing %s", source, ", ".join(missing))
+        logger.warning("%s: missing or pending %s", source, ", ".join(missing))
         return False
     return True
 
