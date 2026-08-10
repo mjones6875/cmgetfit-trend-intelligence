@@ -87,3 +87,54 @@ No API keys were required for any of this — installation and model
 download are independent of which API accounts are still pending.
 
 ---
+
+## 2026-08-10 — Pinterest official API abandoned; replaced with Apify
+
+**Problem:** The official Pinterest Developer API does not expose
+Pinterest Trends data — it's built for ad buyers and content managers, not
+for reading trend signals, and the app-creation process is gated without
+yielding the data actually needed.
+
+**Decision:** Replaced with Apify's `automation-lab/pinterest-trends-scraper`
+actor, accessed via the official `apify-client` PyPI package. Apify is
+self-serve, has a free tier with no credit card required, and returns
+trending keywords, growth scores, seasonality, and country metadata
+directly — the actual data researchers/marketers use for this, rather than
+what the official API was designed for. `ingestion/pinterest_scraper.py`
+was deleted and replaced with `ingestion/apify_pinterest.py`, following
+the same env-var-guard pattern as the other ingestion stubs.
+
+`ingestion/health_check.py` was also restructured at this point to treat
+sources as required-vs-optional rather than uniformly required — Reddit
+(still pending researcher-access approval) no longer fails the overall
+health check; the pipeline is expected to run without it. The live
+Google Trends check and the general design of the module were kept as-is,
+just extended with this required/optional distinction.
+
+---
+
+## 2026-08-10 — `.env` split across two locations, real keys weren't being loaded
+
+**Problem:** A second `.env` file had been created at `config/.env`
+(containing the real API keys just obtained — YouTube, News API,
+Anthropic, Apify, Airtable) separately from the original `.env` at the
+project root (created during initial scaffolding, still full of stale
+placeholders). Every ingestion module calls bare `load_dotenv()` with no
+path argument, which only reads from the project root — so the real keys
+in `config/.env` were never actually being picked up by any code. This is
+the same root-location requirement documented earlier in this log; it
+resurfaced because the original vision doc's repo diagram shows `.env`
+under `config/`, which doesn't match how the setup doc's actual code calls
+`load_dotenv()`.
+
+**Impact assessed before fixing anything:** confirmed via `git status`
+and `git check-ignore` that both files were already gitignored the whole
+time — this was a local-loading bug, not a leak.
+
+**Decision:** Consolidated to a single `.env` at the project root (moved
+`config/.env`'s contents there, overwriting the stale placeholder file,
+then deleted `config/.env` entirely) rather than changing the code to look
+in `config/` instead — keeps the root-only convention consistent with
+every module's existing `load_dotenv()` call.
+
+---
