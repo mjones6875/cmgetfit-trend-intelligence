@@ -138,3 +138,42 @@ in `config/` instead — keeps the root-only convention consistent with
 every module's existing `load_dotenv()` call.
 
 ---
+
+## 2026-08-10 — TikTok Research API stub added; `.env` append bug and a health-check logic bug found by actually running the code
+
+**Context:** A TikTok researcher-access application was submitted
+(academic use only — the Research API's terms prohibit any commercial
+use, so this must be replaced with a licensed commercial provider before
+any future commercial transition; not relevant to the capstone build
+itself). Added `ingestion/tiktok_scraper.py` as a stub, following the
+same pattern as the other pending source (`reddit_scraper.py`): warns via
+`logging.warning` rather than raising, since a missing key here is
+expected, not an error condition.
+
+**Bug 1 — shell append corrupted a line:** Appending
+`TIKTOK_CLIENT_KEY=pending` to `.env` via `echo ... >> .env` landed on the
+same line as the preceding `REDDIT_CLIENT_SECRET` entry, because the file
+had no trailing newline. Caught immediately by checking the file's tail
+before moving on, rather than assuming the append worked. Fixed by
+splitting the merged line back into two.
+
+**Bug 2 — found by actually running `health_check.py`, not just reading
+it:** After wiring `tiktok` into `SOURCES` as an optional source (same
+pattern as `reddit`), ran the module for real instead of trusting the
+code by inspection. Both `reddit` and `tiktok` reported `OK` — wrong, since
+their env vars hold the literal placeholder text `pending`/
+`pending_approval`, not real credentials. `_check_env_vars` only checked
+for an empty string, not for this project's own established
+placeholder convention (the original `pinterest_scraper.py` stub had
+already special-cased the string `"pending_approval"` for exactly this
+reason — the check in `health_check.py` just hadn't been kept consistent
+with it). Fixed by treating `pending`/`pending_approval` values as
+equivalent to missing. Re-ran afterward to confirm both sources now
+correctly report `UNAVAILABLE (optional)` instead of a false `OK`.
+
+**Takeaway for the methods section:** both of these were caught because
+of a practice used throughout this build — verify by actually executing
+the code and inspecting real output, not by reading the diff and assuming
+it's correct.
+
+---
