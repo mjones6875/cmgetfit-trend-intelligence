@@ -1,0 +1,49 @@
+# Environment and secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Data files — never commit raw data or databases
+data/*
+!data/.gitkeep
+*.csv
+*.json
+*.db
+*.sqlite
+*.sqlite3
+
+# Model files
+*.pt
+*.pkl
+*.h5
+*.joblib
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# IDE files
+.vscode/settings.json
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
