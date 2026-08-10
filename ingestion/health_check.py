@@ -12,6 +12,10 @@ here.
 Google Trends (pytrends) requires no key, so it gets an inexpensive live
 request as its actual availability signal.
 
+Reddit is marked optional: researcher access is still pending approval,
+so a missing Reddit key should not fail the overall health check — the
+pipeline is expected to run without it using the other sources.
+
 Author: Marlon J. Jones Jr.
 """
 
@@ -24,13 +28,14 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-REQUIRED_ENV_VARS = {
-    "youtube": ["YOUTUBE_API_KEY"],
-    "news_api": ["NEWS_API_KEY"],
-    "anthropic": ["ANTHROPIC_API_KEY"],
-    "reddit": ["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"],
-    "pinterest": ["PINTEREST_API_KEY"],
-    "airtable": ["AIRTABLE_API_KEY", "AIRTABLE_BASE_ID"],
+# source -> (list of required env var names, whether the source is required for overall health)
+SOURCES = {
+    "youtube": (["YOUTUBE_API_KEY"], True),
+    "news_api": (["NEWS_API_KEY"], True),
+    "anthropic": (["ANTHROPIC_API_KEY"], True),
+    "apify_pinterest": (["APIFY_API_KEY"], True),
+    "airtable": (["AIRTABLE_API_KEY", "AIRTABLE_BASE_ID"], True),
+    "reddit": (["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"], False),
 }
 
 
@@ -54,16 +59,23 @@ def _check_google_trends() -> bool:
 
 
 def run_health_check() -> bool:
-    """Returns True only if every configured source is healthy."""
-    results = {"google_trends": _check_google_trends()}
-    results.update(
-        {source: _check_env_vars(source, var_names) for source, var_names in REQUIRED_ENV_VARS.items()}
-    )
+    """Returns True if every *required* source is healthy. Optional sources
+    (currently just Reddit, pending approval) are logged but don't block
+    overall health."""
+    ok = True
 
-    for source, ok in results.items():
-        logger.info("%s: %s", source, "OK" if ok else "FAILED")
+    google_trends_ok = _check_google_trends()
+    logger.info("google_trends: %s", "OK" if google_trends_ok else "FAILED")
+    ok = ok and google_trends_ok
 
-    return all(results.values())
+    for source, (var_names, required) in SOURCES.items():
+        source_ok = _check_env_vars(source, var_names)
+        status = "OK" if source_ok else ("FAILED" if required else "UNAVAILABLE (optional)")
+        logger.info("%s: %s", source, status)
+        if required:
+            ok = ok and source_ok
+
+    return ok
 
 
 if __name__ == "__main__":

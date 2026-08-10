@@ -21,13 +21,17 @@ apis:
     client_id: YOUR_REDDIT_CLIENT_ID_HERE
     client_secret: YOUR_REDDIT_CLIENT_SECRET_HERE
     user_agent: CMgetFit/1.0
+    status: pending_approval
 
-  pinterest:
-    api_key: YOUR_PINTEREST_API_KEY_HERE
+  apify:
+    api_key: YOUR_APIFY_API_KEY_HERE
+    pinterest_actor: automation-lab/pinterest-trends-scraper
+    note: Replaces official Pinterest API, which does not expose trend data
 
   airtable:
     api_key: YOUR_AIRTABLE_API_KEY_HERE
     base_id: YOUR_AIRTABLE_BASE_ID_HERE
+    base_name: CMgetFit Trend Intelligence
 
 pipeline:
   run_frequency_days: 3
