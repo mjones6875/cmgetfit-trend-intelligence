@@ -54,7 +54,14 @@ verified viral content performance in subsequent weeks.
 
 1. Clone the repo
 2. Create a virtual environment: `python -m venv venv`
+   (On Windows, if `pip install` later fails with `WinError 206: filename
+   or extension is too long`, it's `torch`'s deeply-nested license files
+   hitting the classic 260-character path limit — see `docs/BUILD_LOG.md`.
+   Either enable `LongPathsEnabled` in the registry, or create the venv
+   at a shorter path outside the project tree instead, e.g.
+   `python -m venv C:\venvs\cmgetfit-trend-intelligence`.)
 3. Activate it: `venv\Scripts\activate` (Windows) or `source venv/bin/activate` (Mac/Linux)
+   — adjust the path if you used a relocated venv as above.
 4. Install dependencies: `pip install -r requirements.txt`
 5. Download the spaCy model: `python -m spacy download en_core_web_lg`
 6. Copy `config/config_template.yaml`'s structure into a `.env` file in the
