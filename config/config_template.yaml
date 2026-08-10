@@ -1,0 +1,52 @@
+# CMgetFit Trend Intelligence — Configuration Template
+# Copy this file, rename it to .env, and fill in your actual API keys
+# NEVER commit your actual .env file to GitHub
+
+apis:
+  youtube:
+    api_key: YOUR_YOUTUBE_API_KEY_HERE
+    daily_quota: 10000
+    cost_per_search: 100
+
+  news_api:
+    api_key: YOUR_NEWS_API_KEY_HERE
+    daily_limit: 100
+
+  anthropic:
+    api_key: YOUR_ANTHROPIC_API_KEY_HERE
+    model: claude-sonnet-4-6
+    max_tokens: 1000
+
+  reddit:
+    client_id: YOUR_REDDIT_CLIENT_ID_HERE
+    client_secret: YOUR_REDDIT_CLIENT_SECRET_HERE
+    user_agent: CMgetFit/1.0
+
+  pinterest:
+    api_key: YOUR_PINTEREST_API_KEY_HERE
+
+  airtable:
+    api_key: YOUR_AIRTABLE_API_KEY_HERE
+    base_id: YOUR_AIRTABLE_BASE_ID_HERE
+
+pipeline:
+  run_frequency_days: 3
+  min_upvotes_reddit: 50
+  trend_score_threshold: 40
+  top_trends_to_brief: 5
+  k_clusters: 5
+
+target_subreddits:
+  - food
+  - recipes
+  - Cooking
+  - mealprep
+  - EatCheapAndHealthy
+  - nutrition
+
+food_categories:
+  - ingredient
+  - dish
+  - diet
+  - cooking_method
+  - cuisine

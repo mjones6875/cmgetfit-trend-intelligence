@@ -1,0 +1,43 @@
+# Dependencies for CMgetFit Trend Intelligence.
+#
+# These are NOT pinned to exact tested versions — no install has been run yet.
+# Once you create the venv and run `pip install -r requirements.txt`, regenerate
+# this file with `pip freeze > requirements.txt` so versions are locked to what
+# was actually tested.
+
+# Data ingestion
+pytrends
+praw
+google-api-python-client
+newsapi-python
+
+# NLP
+spacy
+transformers
+torch
+
+# ML
+scikit-learn
+pandas
+numpy
+
+# LLM integration
+anthropic
+
+# Output integrations
+airtable-python-wrapper  # unmaintained upstream; consider migrating to pyairtable
+reportlab
+
+# Scheduling
+apscheduler
+
+# Config / security
+python-dotenv
+
+# Dev tooling
+black
+pylint
+pytest
+
+# After installing, also run:
+#   python -m spacy download en_core_web_lg
